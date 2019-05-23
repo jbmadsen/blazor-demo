@@ -1,5 +1,7 @@
 @using Blazor.Client.Models;
-@inject HttpClient Http
+@using Blazor.Client.Services;
+
+@inject ISudokuSolver Solver
 
 <div>
     <table>
@@ -8,7 +10,7 @@
             <tr>
             @for(int col = 0; col < 9; col++)
             {
-                <SodukoSquare Square="new Coordinate(row, col)" Value="boardState[row,col]" />
+                <SudokuSquare Square="new Coordinate(row, col)" Value="boardState[row,col]" />
                 //<td>@boardState[row,col]</td>
             }
             </tr>
