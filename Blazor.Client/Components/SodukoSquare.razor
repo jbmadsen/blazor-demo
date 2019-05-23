@@ -1,0 +1,15 @@
+@using Blazor.Client.Models;
+
+<td class="unselectable" onclick=@SquareClicked>@Value</td>
+
+@functions {
+    // Demonstrates how a parent component can supply parameters
+    [Parameter] Coordinate Square { get; set; }
+
+    [Parameter] int? Value { get; set; }
+
+    private void SquareClicked()
+    {
+        Console.WriteLine($"Square Clicked: {Value}");
+    }
+}

@@ -1,3 +1,4 @@
+@using Blazor.Client.Models;
 @inject HttpClient Http
 
 <div>
@@ -7,7 +8,8 @@
             <tr>
             @for(int col = 0; col < 9; col++)
             {
-                <td>@boardState[row,col]</td>
+                <SodukoSquare Square="new Coordinate(row, col)" Value="boardState[row,col]" />
+                //<td>@boardState[row,col]</td>
             }
             </tr>
         }
