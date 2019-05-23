@@ -9,6 +9,7 @@ namespace Blazor.Client
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IDataRepository, DataRepository>(); 
+            services.AddSingleton<ISudokuService, SudokuService>(); 
         }
 
 

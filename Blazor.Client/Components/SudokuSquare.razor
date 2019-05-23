@@ -1,15 +1,24 @@
 @using Blazor.Client.Models;
 
-<td class="unselectable" onclick=@SquareClicked>@Value</td>
+<!--<td class="unselectable" onclick=@SquareClicked>@GetDisplayValue()</td>-->
+<td class="" onclick=@SquareClicked>@GetDisplayValue()</td>
 
 @functions {
     // Demonstrates how a parent component can supply parameters
-    [Parameter] Coordinate Square { get; set; }
+    [Parameter] SudokuCell Cell { get; set; }
 
-    [Parameter] int? Value { get; set; }
+    private string GetDisplayValue()
+    {
+        if (Cell == null || Cell.Value == 0)
+        {
+            return "";
+        }
+
+        return Cell.Value.ToString();
+    }
 
     private void SquareClicked()
     {
-        Console.WriteLine($"Square Clicked: {Value}");
+        Console.WriteLine($"Square Clicked: {Cell.Position.X}, {Cell.Position.Y}");
     }
 }
