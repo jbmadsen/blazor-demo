@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Blazor.Client.Models
 {
@@ -7,6 +9,9 @@ namespace Blazor.Client.Models
     {
         private SudokuCell[,] _grid = new SudokuCell[9,9];
         public SudokuCell[,] Grid => _grid;
+
+        public IEnumerable<SudokuCell> GridAsIEnumerable => 
+            from SudokuCell item in _grid select item; // Convert 2D array to an Ienumerable;
 
         public SudokuGrid()
         {
@@ -24,6 +29,19 @@ namespace Blazor.Client.Models
             }
         }
 
+        public void PrintAll()
+        {
+            var str = "";
+            foreach(var cell in GridAsIEnumerable)
+            {
+                str += $"{cell.Value}";
+                if (cell.Position.Y == 8)
+                {
+                    str += "\n";
+                }
+            }
+            Console.WriteLine(str);
+        }
     }
 
 }

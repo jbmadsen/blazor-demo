@@ -16,13 +16,13 @@ namespace Blazor.Client.Services
 
         public SudokuService()
         {
-            _generator = new SudokuGenerator(SudokuGenerator.Difficulty.Easy);
+            _generator = new SudokuGenerator();
         }
 
         public SudokuGrid CreatePuzzle()
         {
             Console.WriteLine("Generating puzzle");
-            return _generator.CreateGrid();
+            return _generator.CreateGrid(SudokuGenerator.Difficulty.Easy);
         }
     }
 }

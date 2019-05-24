@@ -7,7 +7,7 @@ namespace Blazor.Client.Models
     {
         public Coordinate Position { get; set; }
 
-        public int Value { get; set; }
+        public int Value { get; set; } = 0;
 
         public bool Enabled { get; set; } // Starting values should not be editable
 
