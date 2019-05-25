@@ -23,13 +23,15 @@ namespace Blazor.Client.Services.Sudoku
         private bool SolverFunction(ref SudokuGrid grid)
         {
             //grid.PrintAll(); // Debug only
-
-            if (IsFull(grid))
-            {
-                return true;
-            }
             
             var cell = GetNextEmptyCell(grid);
+
+            if (cell == null)
+            {
+                // No more empty cells. We are done.
+                return true;
+            }
+
             var possibleValues = PossibleValuesForPosition(grid, cell);
 
             for(int i = 1; i < 10; i++)
@@ -74,12 +76,12 @@ namespace Blazor.Client.Services.Sudoku
 
         public List<int> PossibleValuesForPosition(SudokuGrid grid, SudokuCell cell)
         {
-            var cells = grid.GridAsIEnumerable;
+            //var cells = grid.GridAsIEnumerable;
             var possibleValues = new List<int>();
 
             for(int i = 1; i < 10; i++)
             {
-                if (CanAddValue(cells, cell, i) == false)
+                if (CanAddValue(grid, cell, i) == false)
                 {
                     continue;
                 }
@@ -89,6 +91,15 @@ namespace Blazor.Client.Services.Sudoku
             return possibleValues;
         }
 
+
+        public bool CanAddValue(SudokuGrid grid, SudokuCell cell, int value)
+        {
+            if (IsInRow(grid, cell, value) || IsInColumn(grid, cell, value) || IsInSquare(grid, cell, value))
+            {
+                return false;
+            }
+            return true;
+        }
 
         public bool CanAddValue(IEnumerable<SudokuCell> cells, SudokuCell cell, int value)
         {
@@ -100,6 +111,20 @@ namespace Blazor.Client.Services.Sudoku
         }
 
 
+        private bool IsInRow(SudokuGrid grid, SudokuCell cell, int value)
+        {
+            for(int y = 0; y < 9; y++)
+            {
+                if (grid.Grid[cell.Position.X,y].Value == value)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
         private bool IsInRow(IEnumerable<SudokuCell> cells, SudokuCell cell, int value)
         {
             var isInRow = cells.Any(c => c.Position.X == cell.Position.X && c.Value == value);
@@ -107,10 +132,43 @@ namespace Blazor.Client.Services.Sudoku
         }
 
 
+        private bool IsInColumn(SudokuGrid grid, SudokuCell cell, int value)
+        {
+            for(int x = 0; x < 9; x++)
+            {
+                if (grid.Grid[x,cell.Position.Y].Value == value)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private bool IsInColumn(IEnumerable<SudokuCell> cells, SudokuCell cell, int value)
         {
             var isInRow = cells.Any(c => c.Position.Y == cell.Position.Y && c.Value == value);
             return isInRow;
+        }
+
+
+        private bool IsInSquare(SudokuGrid grid, SudokuCell cell, int value)
+        {
+            var x = ( cell.Position.X / 3 ) * 3;
+            var y = ( cell.Position.Y / 3 ) * 3;
+
+            for (int i = x; i < x + 3; i++)
+            {
+                for (int j = y; j < y + 3; j++)
+                {
+                    if (grid.Grid[i,j].Value == value)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
 

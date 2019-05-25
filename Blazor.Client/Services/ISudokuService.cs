@@ -22,7 +22,15 @@ namespace Blazor.Client.Services
         public SudokuGrid CreatePuzzle()
         {
             Console.WriteLine("Generating puzzle");
-            return _generator.CreateGrid(SudokuGenerator.Difficulty.Easy);
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+            var puzzle = _generator.CreateGrid(SudokuGenerator.Difficulty.Easy);
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine($"Generated puzzle in {elapsedMs} ms.");
+
+            return puzzle;
         }
     }
 }

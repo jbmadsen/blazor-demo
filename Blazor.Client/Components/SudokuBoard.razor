@@ -3,14 +3,16 @@
 
 @inject ISudokuService Sudoku
 
-<div>
+<div id="" style="text-align: center;">
+    <button type="button" onclick=@createPuzzle>Create puzzle</button>
+    <br />
     <table>
         @for(int row = 0; row < 9; row++)
         {
             <tr>
             @for(int col = 0; col < 9; col++)
             {
-                <SudokuSquare Cell="Grid.Grid[row,col]" />
+                <SudokuSquare Cell="Grid?.Grid[row,col]" />
                 //<td class="unselectable">0</td>
             }
             </tr>
@@ -22,6 +24,11 @@
     SudokuGrid Grid;
 
     protected override void OnInit()
+    {
+        
+    }
+
+    private void createPuzzle()
     {
         Grid = Sudoku.CreatePuzzle();
     }

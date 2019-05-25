@@ -13,10 +13,12 @@ namespace Blazor.Client.Models
         public IEnumerable<SudokuCell> GridAsIEnumerable => 
             from SudokuCell item in _grid select item; // Convert 2D array to an Ienumerable;
 
+
         public SudokuGrid()
         {
             InitEmptyGrid();
         }
+
 
         private void InitEmptyGrid()
         {
