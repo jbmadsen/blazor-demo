@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blazor.Client.Extensions;
 using Blazor.Client.Models;
 
 namespace Blazor.Client.Services.Sudoku
@@ -14,27 +15,26 @@ namespace Blazor.Client.Services.Sudoku
             Hard
         }
 
-        private readonly Random _random;
+        private readonly int? _seed;
 
 
         public SudokuGenerator()
         {
-            _random = new Random();
         }
 
         public SudokuGenerator(int seed)
         {
-            _random = new Random(seed);
+            _seed = seed;
         }
 
 
         public SudokuGrid CreateGrid(Difficulty difficulty)
         {
-            var solver = new SudokuSolver();
+            var solver = new SudokuSolver(asGenerator: true);
             var grid = new SudokuGrid();
             var values = Enumerable.Range(1,9).ToList();
 
-            Shuffle<int>(ref values);
+            values.Shuffle();
 
             for(int y = 0; y < 9; y++)
             {
@@ -44,7 +44,7 @@ namespace Blazor.Client.Services.Sudoku
             for(int x = 1; x < 3; x++)
             {
                 var list = values.Skip(x*3).Take(3).ToList();
-                Shuffle<int>(ref list);
+                list.Shuffle();
 
                 for(int y = 0; y < 3; y++)
                 {
@@ -57,18 +57,6 @@ namespace Blazor.Client.Services.Sudoku
             // TODO: Remove elements to match the difficulty
 
             return solvedGrid;
-        }
-
-
-        private void Shuffle<T>(ref List<T> list)  
-        {  
-            var count = list.Count;
-            for (var i = 0; i < count - 1; ++i) {
-                var r = _random.Next(i, count);
-                var tmp = list[i];
-                list[i] = list[r];
-                list[r] = tmp;
-            }
         }
     }
 }

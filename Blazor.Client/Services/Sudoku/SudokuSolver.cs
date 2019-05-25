@@ -1,15 +1,17 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Blazor.Client.Extensions;
 using Blazor.Client.Models;
 
 namespace Blazor.Client.Services.Sudoku
 {
     public class SudokuSolver
     {
-        public SudokuSolver()
+        private bool _asGenerator = false;
+        public SudokuSolver(bool asGenerator = false)
         {
-            
+            _asGenerator = asGenerator;
         }
 
 
@@ -86,6 +88,11 @@ namespace Blazor.Client.Services.Sudoku
                     continue;
                 }
                 possibleValues.Add(i);
+            }
+
+            if (_asGenerator)
+            {
+                possibleValues.Shuffle();
             }
 
             return possibleValues;
