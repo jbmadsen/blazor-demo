@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using Blazor.Client.Extensions;
 using Blazor.Client.Models;
 
-namespace Blazor.Client.Services.Sudoku
+namespace Blazor.Client.Services.Sudoku.Solvers
 {
-    public class SudokuSolver
+    public class SimpleSolver : ISudokuSolver
     {
+        private int? _seed;
         private bool _asGenerator = false;
-        public SudokuSolver(bool asGenerator = false)
+        public SimpleSolver(int? seed = null, bool asGenerator = false)
         {
             _asGenerator = asGenerator;
+            _seed = seed;
         }
 
 
@@ -76,7 +78,7 @@ namespace Blazor.Client.Services.Sudoku
         }
 
 
-        public List<int> PossibleValuesForPosition(SudokuGrid grid, SudokuCell cell)
+        private List<int> PossibleValuesForPosition(SudokuGrid grid, SudokuCell cell)
         {
             //var cells = grid.GridAsIEnumerable;
             var possibleValues = new List<int>();
@@ -92,14 +94,14 @@ namespace Blazor.Client.Services.Sudoku
 
             if (_asGenerator)
             {
-                possibleValues.Shuffle();
+                possibleValues.Shuffle(_seed);
             }
 
             return possibleValues;
         }
 
 
-        public bool CanAddValue(SudokuGrid grid, SudokuCell cell, int value)
+        private bool CanAddValue(SudokuGrid grid, SudokuCell cell, int value)
         {
             if (IsInRow(grid, cell, value) || IsInColumn(grid, cell, value) || IsInSquare(grid, cell, value))
             {
@@ -108,7 +110,7 @@ namespace Blazor.Client.Services.Sudoku
             return true;
         }
 
-        public bool CanAddValue(IEnumerable<SudokuCell> cells, SudokuCell cell, int value)
+        private bool CanAddValue(IEnumerable<SudokuCell> cells, SudokuCell cell, int value)
         {
             if (IsInRow(cells, cell, value) || IsInColumn(cells, cell, value) || IsInSquare(cells, cell, value))
             {

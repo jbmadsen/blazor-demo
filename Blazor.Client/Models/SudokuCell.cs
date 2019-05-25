@@ -11,6 +11,8 @@ namespace Blazor.Client.Models
 
         public bool Enabled { get; set; } // Starting values should not be editable
 
+        public bool Valid { get; set; } = true;
+
 
         public SudokuCell(int x, int y)
         {

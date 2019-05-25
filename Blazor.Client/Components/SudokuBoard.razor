@@ -1,35 +1,55 @@
 @using Blazor.Client.Models;
+@using Blazor.Client.Models.Enums;
 @using Blazor.Client.Services;
 
 @inject ISudokuService Sudoku
 
-<div id="" style="text-align: center;">
-    <button type="button" onclick=@createPuzzle>Create puzzle</button>
-    <br />
-    <table>
-        @for(int row = 0; row < 9; row++)
-        {
-            <tr>
-            @for(int col = 0; col < 9; col++)
+<div class="grid-container">
+    <div class="grid-item-button">
+        <button class="btn btn-primary" type="button" onclick=@CreatePuzzle>Create puzzle</button>
+    </div>
+    <div class="grid-item-dropdown">
+        <select class="form-control" style="width: 200px;" onchange="@DifficultyClicked">
+            <option value="">Select difficulty</option>
+            @foreach (var diff in DifficultyList)
             {
-                <SudokuSquare Cell="Grid?.Grid[row,col]" />
-                //<td class="unselectable">0</td>
+                <option value="@diff">@diff</option>
             }
-            </tr>
-        }
-    </table>
+        </select>
+    </div>
 </div>
+<table style="text-align: center;">
+    @for(int row = 0; row < 9; row++)
+    {
+        <tr>
+        @for(int col = 0; col < 9; col++)
+        {
+            <SudokuSquare Cell="Grid?.Grid[row,col]" />
+        }
+        </tr>
+    }
+</table>
+
 
 @functions {
+    Difficulty _selectedDifficulty = Difficulty.Easy;
     SudokuGrid Grid;
+
+    List<string> DifficultyList = new List<string>();
 
     protected override void OnInit()
     {
-        
+        DifficultyList = Sudoku.GetDifficulties();
     }
 
-    private void createPuzzle()
+    private void CreatePuzzle()
     {
-        Grid = Sudoku.CreatePuzzle();
+        Grid = Sudoku.CreatePuzzle(_selectedDifficulty);
+    }
+
+    private void DifficultyClicked(UIChangeEventArgs difficultyEvent)
+    {
+        var selection = difficultyEvent.Value.ToString();
+        Enum.TryParse<Difficulty>(selection, out _selectedDifficulty);
     }
 }
