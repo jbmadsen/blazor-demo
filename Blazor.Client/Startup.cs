@@ -8,6 +8,8 @@ namespace Blazor.Client
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IModalSerivce, ModalService>();
+            
             services.AddSingleton<IDataRepository, DataRepository>(); 
             services.AddSingleton<ISudokuService, SudokuService>(); 
         }

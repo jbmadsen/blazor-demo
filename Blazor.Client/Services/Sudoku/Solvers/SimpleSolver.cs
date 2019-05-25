@@ -6,6 +6,7 @@ using Blazor.Client.Models;
 
 namespace Blazor.Client.Services.Sudoku.Solvers
 {
+    // Very simple recursive brute-force solver with backtracking 
     public class SimpleSolver : ISudokuSolver
     {
         private int? _seed;
