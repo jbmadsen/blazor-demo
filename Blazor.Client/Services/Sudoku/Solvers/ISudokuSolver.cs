@@ -4,6 +4,6 @@ namespace Blazor.Client.Services.Sudoku.Solvers
 {
     public interface ISudokuSolver
     {
-        SudokuGrid Solve(SudokuGrid grid);
+        (bool success, SudokuGrid grid) Solve(SudokuGrid grid);
     }
 }

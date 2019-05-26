@@ -18,6 +18,17 @@ namespace Blazor.Client.Models
         {
             Position = new Coordinate(x, y);
         }
+
+
+        public SudokuCell DeepClone()
+        {
+            return new SudokuCell(this.Position.X, this.Position.Y)
+            {
+                Value = this.Value,
+                Valid = this.Valid,
+                Enabled = this.Enabled,
+            };
+        }
     }
 
 }

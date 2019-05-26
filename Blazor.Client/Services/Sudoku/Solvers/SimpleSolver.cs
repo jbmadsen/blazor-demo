@@ -18,10 +18,10 @@ namespace Blazor.Client.Services.Sudoku.Solvers
         }
 
 
-        public SudokuGrid Solve(SudokuGrid grid)
+        public (bool success, SudokuGrid grid) Solve(SudokuGrid grid)
         {
-            SolverFunction(ref grid);
-            return grid;
+            var success = SolverFunction(ref grid);
+            return (success, grid);
         }
 
 
