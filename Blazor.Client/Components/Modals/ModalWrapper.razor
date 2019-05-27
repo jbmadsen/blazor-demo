@@ -1,0 +1,62 @@
+@using System;
+@using Blazor.Client.Services;
+@using Microsoft.AspNetCore.Blazor;
+@using Microsoft.AspNetCore.Components;
+
+@implements IDisposable
+
+@inject IModalSerivce Modal
+
+
+<div class='bm-container @(IsVisible ? "bm-active" : "")' id="modalWrapper">
+    <div class="bm-overlay" onclick="@CloseModal"></div>
+    <div class="blazor-modal">
+        <div class="bm-header">
+            <h3 class="bm-title">@Title</h3>
+            <button type="button" class="bm-close" onclick="@CloseModal">
+                <span>&times;</span>
+            </button>
+        </div>
+        <div class="bm-content">
+            @Content
+        </div>
+    </div>
+</div>
+
+
+@functions {
+
+    protected bool IsVisible { get; set; }
+    protected string Title { get; set; }
+    protected RenderFragment Content { get; set; }
+        
+    protected override void OnInit()
+    {
+        Modal.OnShow += ShowModal;
+        Modal.OnClose += CloseModal;
+    }
+        
+    public void ShowModal(string title, RenderFragment content)
+    {
+        Title = title;
+        Content = content;
+        IsVisible = true;
+        
+        StateHasChanged();
+    }
+
+    public void CloseModal()
+    {
+        IsVisible = false;
+        Title = "";
+        Content = null;
+        
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Modal.OnShow -= ShowModal;
+        Modal.OnClose -= CloseModal;
+    }
+}

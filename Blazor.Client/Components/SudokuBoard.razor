@@ -1,8 +1,13 @@
+@using Blazor.Client.Components.Modals;
 @using Blazor.Client.Models;
 @using Blazor.Client.Models.Enums;
 @using Blazor.Client.Services;
 
+@inject IModalSerivce Modal
 @inject ISudokuService Sudoku
+
+
+<ModalWrapper />
 
 <div class="grid-container">
     <div class="grid-item-button">
@@ -44,6 +49,11 @@
 
     private void CreatePuzzle()
     {
+        if (Grid != null && Grid.IsSolved() == false)
+        {
+            //Modal.Show("Create new?", typeof(PromptModal));
+        }
+
         Grid = Sudoku.CreatePuzzle(_selectedDifficulty);
     }
 

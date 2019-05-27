@@ -1,0 +1,25 @@
+@inject IJSRuntime JSRuntime
+
+@if (ShowPrompt)
+{
+    <div class="alert alert-success" role="alert">
+        <button onclick="@CancelForm" class="btn btn-primary">Cancel</button>
+        <button onclick="@AcceptForm" class="btn btn-primary">Create Sudoku</button>
+    </div>
+}
+
+@functions {
+	bool ShowPrompt { get; set; } = true;
+
+	void AcceptForm()
+	{
+		ShowPrompt = false;
+        JSRuntime.InvokeAsync<bool>("modalFunctions.hidePrompt");
+	}
+
+    void CancelForm()
+	{
+		ShowPrompt = false;
+        JSRuntime.InvokeAsync<bool>("modalFunctions.hidePrompt");
+	}
+}

@@ -20,6 +20,12 @@ namespace Blazor.Client.Models
         }
 
 
+        public bool IsSolved()
+        {
+            return false;
+        }
+
+
         public List<int> ValidValues(int x, int y)
         {
             try
