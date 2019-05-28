@@ -1,6 +1,6 @@
 window.modalFunctions = {
-    hidePrompt: function (text) {
-        $('#modalWrapper').modal('hide');
+    hidePrompt: function () {
+        console.log("js called..");
         return;
     },
 };

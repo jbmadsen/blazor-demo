@@ -29,28 +29,38 @@
     protected bool IsVisible { get; set; }
     protected string Title { get; set; }
     protected RenderFragment Content { get; set; }
-        
+    
+    protected Action PositiveAction { get; set; }
+    protected Action NegativeAction { get; set; }
+
     protected override void OnInit()
     {
         Modal.OnShow += ShowModal;
         Modal.OnClose += CloseModal;
     }
         
-    public void ShowModal(string title, RenderFragment content)
+    public void ShowModal(string title, RenderFragment content, Action positiveAction, Action negativeAction)
     {
         Title = title;
         Content = content;
         IsVisible = true;
+        PositiveAction = positiveAction;
+        NegativeAction = negativeAction;
         
         StateHasChanged();
     }
 
     public void CloseModal()
     {
+        NegativeAction?.Invoke();
+        
         IsVisible = false;
         Title = "";
         Content = null;
         
+        PositiveAction = null;
+        NegativeAction = null;
+
         StateHasChanged();
     }
 

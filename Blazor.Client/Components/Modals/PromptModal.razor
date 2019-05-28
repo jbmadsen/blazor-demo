@@ -2,24 +2,37 @@
 
 @if (ShowPrompt)
 {
-    <div class="alert alert-success" role="alert">
-        <button onclick="@CancelForm" class="btn btn-primary">Cancel</button>
-        <button onclick="@AcceptForm" class="btn btn-primary">Create Sudoku</button>
+    <div>
+        <button onclick="@AcceptForm" class="btn btn-primary" style="float: right; ">Create Sudoku</button>
+        &nbsp;&nbsp; 
+        <button onclick="@CancelForm" class="btn btn-primary" style="float: right; margin-right: 0.5rem;">Cancel</button>
     </div>
 }
 
 @functions {
+
+    [Parameter]
+    public Action PositiveAction { get; set; }
+    [Parameter]
+    public Action NegativeAction { get; set; }
+    [Parameter]
+    public Action CloseAction { get; set; }
+
 	bool ShowPrompt { get; set; } = true;
 
 	void AcceptForm()
 	{
 		ShowPrompt = false;
         JSRuntime.InvokeAsync<bool>("modalFunctions.hidePrompt");
+        PositiveAction?.Invoke();
+        CloseAction?.Invoke();
 	}
 
     void CancelForm()
 	{
 		ShowPrompt = false;
         JSRuntime.InvokeAsync<bool>("modalFunctions.hidePrompt");
+        NegativeAction?.Invoke();
+        CloseAction?.Invoke();
 	}
 }

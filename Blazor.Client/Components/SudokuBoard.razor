@@ -51,10 +51,20 @@
     {
         if (Grid != null && Grid.IsSolved() == false)
         {
-            //Modal.Show("Create new?", typeof(PromptModal));
+            Modal.Show("Create new?", typeof(PromptModal), () => CreatePuzzleConfirmed(), null);
+            return;
         }
+        else
+        {
+            CreatePuzzleConfirmed();
+        }
+    }
 
+    private void CreatePuzzleConfirmed()
+    {
         Grid = Sudoku.CreatePuzzle(_selectedDifficulty);
+
+        StateHasChanged();
     }
 
     private void DifficultyClicked(UIChangeEventArgs difficultyEvent)
