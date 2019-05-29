@@ -1,0 +1,70 @@
+@using System.Threading;
+@using Blazor.Client.Models;
+
+
+<div class="unselectable" style="text-align: center;" >
+    @CounterLabel
+</div>
+
+
+@functions {
+
+    private CancellationTokenSource _cts;
+    private DateTime _startTime;
+    public string CounterLabel { get; private set; } = "";
+
+    private SudokuGrid _grid;
+
+    protected override void OnInit()
+    {
+        // "00:00:00"
+    }
+
+    public void Count(SudokuGrid grid)
+    {
+        _grid = grid;
+
+        _startTime = DateTime.UtcNow;
+
+        if (_cts != null)
+        {
+            _cts.Cancel();
+            _cts = null;
+        }
+        DoCount();
+    }
+
+
+    private void DoCount()
+    {
+        if (_cts != null)
+        {
+            return;
+        }
+
+        _cts = new CancellationTokenSource();
+
+        // Start a task and return it
+        Task.Run(async () =>
+        {
+            try
+            {
+                while(_grid.IsSolved() == false)
+                {
+                    if (_cts.Token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                    await Task.Delay(500);
+                    TimeSpan time = DateTime.UtcNow - _startTime;
+                    CounterLabel = time.ToString(@"hh\:mm\:ss");
+                    this.StateHasChanged();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+        });
+    }
+}

@@ -37,6 +37,7 @@
         </tr>
     }
 </table>
+<Counter ref="CounterComponent" />
 
 
 @functions {
@@ -45,6 +46,9 @@
 
     private SudokuGrid _grid;
     private SudokuCell _currentlySelectedCell;
+
+    // https://github.com/aspnet/Blazor/pull/685
+    Counter CounterComponent;
 
     protected override void OnInit()
     {
@@ -71,8 +75,10 @@
 
         if (_currentlySelectedCell != null)
         {
-            CellSelected(_currentlySelectedCell); // Reset selection   
+            CellSelected(_currentlySelectedCell); // Reset selection
         }
+
+        CounterComponent.Count(_grid);
 
         StateHasChanged();
     }
