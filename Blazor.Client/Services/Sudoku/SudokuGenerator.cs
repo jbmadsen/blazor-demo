@@ -34,9 +34,11 @@ namespace Blazor.Client.Services.Sudoku
             var (success, solvedGrid) = solver.Solve(grid);
 
             // Minimize risk of getting a similar looking puzzle
-            RandomizeLayout(ref grid);
+            RandomizeLayout(ref solvedGrid);
             // Remove elements to match the difficulty
-            RemoveElements(ref grid, difficulty);
+            RemoveElements(ref solvedGrid, difficulty);
+
+            SetEnabledStates(ref solvedGrid);
 
             return solvedGrid;
         }
@@ -207,6 +209,18 @@ namespace Blazor.Client.Services.Sudoku
             }
 
             return toRemove;
+        }
+
+        private void SetEnabledStates(ref SudokuGrid grid)
+        {
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    grid.Grid[x,y].Enabled = grid.Grid[x,y].Value == 0;
+                    grid.Grid[x,y].ResetColors();
+                }
+            }
         }
     }
 }

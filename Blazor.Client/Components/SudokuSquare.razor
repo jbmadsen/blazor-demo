@@ -1,11 +1,42 @@
 @using Blazor.Client.Models;
 
+@implements IDisposable;
+
 <!--<td class="unselectable" onclick=@SquareClicked>@GetDisplayValue()</td>-->
-<td class="unselectable" onclick=@SquareClicked>@GetDisplayValue()</td>
+<td class="unselectable" onclick=@SquareClicked style="background-color: @BackgroundColor;">
+    <div style="color: @TextColor;">@GetDisplayValue()</div>
+</td>
 
 @functions {
+    private SudokuCell _cell;
     // Demonstrates how a parent component can supply parameters
-    [Parameter] SudokuCell Cell { get; set; }
+    [Parameter] 
+    SudokuCell Cell 
+    {
+        get => _cell; 
+        set { _cell = value; Setup(); } 
+    }
+
+    [Parameter]
+    Action<SudokuCell> SelectedEvent { get; set; }
+
+    string TextColor { get; set; }
+    string BackgroundColor { get; set; }
+
+    protected override void OnInit()
+    {
+    }
+
+    private void Setup()
+    {
+        if (Cell == null)
+        {
+            return;
+        }
+
+        Cell.BackgroundColorChanged += OnBackgroundColorChanged;
+        Cell.ValueColorChanged += OnValueColorChanged;
+    }
 
     private string GetDisplayValue()
     {
@@ -19,6 +50,34 @@
 
     private void SquareClicked()
     {
-        Console.WriteLine($"Square Clicked: {Cell.Position.X}, {Cell.Position.Y}");
+        if (Cell == null || Cell.Enabled == false)
+        {
+            return;
+        }
+
+        SelectedEvent?.Invoke(Cell);
+
+        //Console.WriteLine($"Square Clicked: {Cell.Position.X}, {Cell.Position.Y}");
+    }
+
+    protected void OnValueColorChanged(string color)
+    {
+        TextColor = color;   
+        StateHasChanged();
+    }
+
+    protected void OnBackgroundColorChanged(string color)
+    {
+        BackgroundColor = color;   
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (Cell != null)
+        {
+            Cell.BackgroundColorChanged -= OnBackgroundColorChanged;
+            Cell.ValueColorChanged -= OnValueColorChanged;
+        }   
     }
 }

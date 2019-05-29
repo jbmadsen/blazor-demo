@@ -13,6 +13,8 @@ namespace Blazor.Client.Models
         public IEnumerable<SudokuCell> GridAsIEnumerable => 
             from SudokuCell item in _grid select item; // Convert 2D array to an Ienumerable;
 
+        public static Action<int> KeyPressedEvent { get; set; }
+        public static void KeyPressed(int key) => KeyPressedEvent?.Invoke(key);
 
         public SudokuGrid()
         {

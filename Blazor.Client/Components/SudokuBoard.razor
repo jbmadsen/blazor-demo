@@ -3,9 +3,10 @@
 @using Blazor.Client.Models.Enums;
 @using Blazor.Client.Services;
 
+@implements IDisposable;
+
 @inject IModalSerivce Modal
 @inject ISudokuService Sudoku
-
 
 <ModalWrapper />
 
@@ -16,7 +17,7 @@
     <div class="grid-item-dropdown">
         <select class="form-control" style="width: 200px;" onchange="@DifficultyClicked">
             <option value="">Select difficulty</option>
-            @foreach (var diff in DifficultyList)
+            @foreach (var diff in _difficultyList)
             {
                 <option value="@diff">@diff</option>
             }
@@ -29,7 +30,9 @@
         <tr>
         @for(int col = 0; col < 9; col++)
         {
-            <SudokuSquare Cell="Grid?.Grid[row,col]" />
+            <SudokuSquare 
+                Cell="_grid?.Grid[row,col]" 
+                SelectedEvent="(c) => CellSelected(c)" />
         }
         </tr>
     }
@@ -37,19 +40,21 @@
 
 
 @functions {
-    Difficulty _selectedDifficulty = Difficulty.Easy;
-    SudokuGrid Grid;
+    private Difficulty _selectedDifficulty = Difficulty.Easy;
+    private List<string> _difficultyList = new List<string>();
 
-    List<string> DifficultyList = new List<string>();
+    private SudokuGrid _grid;
+    private SudokuCell _currentlySelectedCell;
 
     protected override void OnInit()
     {
-        DifficultyList = Sudoku.GetDifficulties();
+        SudokuGrid.KeyPressedEvent += OnKeyPressedEvent;
+        _difficultyList = Sudoku.GetDifficulties();
     }
 
     private void CreatePuzzle()
     {
-        if (Grid != null && Grid.IsSolved() == false)
+        if (_grid != null && _grid.IsSolved() == false)
         {
             Modal.Show("Create new?", typeof(PromptModal), () => CreatePuzzleConfirmed(), null);
             return;
@@ -62,7 +67,12 @@
 
     private void CreatePuzzleConfirmed()
     {
-        Grid = Sudoku.CreatePuzzle(_selectedDifficulty);
+        _grid = Sudoku.CreatePuzzle(_selectedDifficulty);
+
+        if (_currentlySelectedCell != null)
+        {
+            CellSelected(_currentlySelectedCell); // Reset selection   
+        }
 
         StateHasChanged();
     }
@@ -71,5 +81,57 @@
     {
         var selection = difficultyEvent.Value.ToString();
         Enum.TryParse<Difficulty>(selection, out _selectedDifficulty);
+    }
+
+    private void CellSelected(SudokuCell cell)
+    {
+        if (cell == _currentlySelectedCell)
+        {
+            _currentlySelectedCell.SetSelected(false);
+            _currentlySelectedCell = null;
+            return;
+        }
+
+        if (_currentlySelectedCell != null)
+        {
+            _currentlySelectedCell.SetSelected(false);
+            _currentlySelectedCell = null;
+        }
+
+        _currentlySelectedCell = cell;
+        _currentlySelectedCell.SetSelected(true);
+    }
+
+    public void OnKeyPressedEvent(int keyCode)
+    {
+        if (_currentlySelectedCell == null)
+        {
+            return;
+        }
+        
+        // TODO: Handle arrow keys to move the selected cell around the board
+        
+        if (keyCode == '0')
+        {
+            _currentlySelectedCell.SetValue(0, true);
+            return;
+        }
+
+        var intKey = keyCode - '0';
+        var validValues = _grid.ValidValues(_currentlySelectedCell.Position.X, _currentlySelectedCell.Position.Y);
+        Console.WriteLine($"Key: {intKey}, List: {string.Join(",", validValues.ToArray())}");
+        _currentlySelectedCell.SetValue(intKey, validValues.Contains(intKey));
+    }
+
+    public void Dispose()
+    {
+        SudokuGrid.KeyPressedEvent -= OnKeyPressedEvent;
+    }
+
+    [JSInvokable]
+    public static void KeyPressed(int keyCode)
+    {
+        //Console.WriteLine($"I am aware that {keyCode - '0'} was clicked!");
+        SudokuGrid.KeyPressed(keyCode);
     }
 }
