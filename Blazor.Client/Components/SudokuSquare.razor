@@ -34,8 +34,17 @@
             return;
         }
 
+        if (Cell != null)
+        {
+            Cell.BackgroundColorChanged -= OnBackgroundColorChanged;
+            Cell.ValueColorChanged -= OnValueColorChanged;
+        }
+
         Cell.BackgroundColorChanged += OnBackgroundColorChanged;
         Cell.ValueColorChanged += OnValueColorChanged;
+
+        TextColor = Cell.ValueColor;
+        BackgroundColor = Cell.BackgroundColor;
     }
 
     private string GetDisplayValue()
