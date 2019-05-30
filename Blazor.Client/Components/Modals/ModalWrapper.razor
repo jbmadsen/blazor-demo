@@ -8,16 +8,16 @@
 @inject IModalSerivce Modal
 
 
-<div class='bm-container @(IsVisible ? "bm-active" : "")' id="modalWrapper">
-    <div class="bm-overlay" onclick="@CloseModal"></div>
-    <div class="blazor-modal">
-        <div class="bm-header">
-            <h3 class="bm-title">@Title</h3>
-            <button type="button" class="bm-close" onclick="@CloseModal">
+<div class='modal-container @(IsVisible ? "modal-active" : "")' id="modalWrapper">
+    <div class="modal-overlay" onclick="@CloseModal"></div>
+    <div class="modal-wrapper">
+        <div class="modal-header">
+            <h3 class="modal-title">@Title</h3>
+            <button type="button" class="modal-close" onclick="@CloseModal">
                 <span>&times;</span>
             </button>
         </div>
-        <div class="bm-content">
+        <div class="modal-content">
             @Content
         </div>
     </div>
