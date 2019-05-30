@@ -35,6 +35,12 @@
     }
 
 
+    public void StopCount()
+    {
+        _cts.Cancel();
+    }
+
+
     private void DoCount()
     {
         if (_cts != null)
@@ -49,7 +55,7 @@
         {
             try
             {
-                while(_grid.IsSolved() == false)
+                while(_grid.CheckSolved() == false)
                 {
                     if (_cts.Token.IsCancellationRequested)
                     {
@@ -64,6 +70,13 @@
             catch (TaskCanceledException)
             {
                 return;
+            }
+            finally
+            {
+                if (_cts != null)
+                {
+                    _cts = null;
+                }
             }
         });
     }

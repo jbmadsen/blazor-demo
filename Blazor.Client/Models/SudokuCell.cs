@@ -42,12 +42,7 @@ namespace Blazor.Client.Models
 
         public void SetSelected(bool state)
         {
-            if (Enabled == false)
-            {
-                return;
-            }
-
-            BackgroundColor = state ? "#add8e6" : "ffffff";
+            BackgroundColor = state ? (Enabled ? "#add8e6" : "#dddddd") : "#ffffff";
             BackgroundColorChanged?.Invoke(BackgroundColor);
         }
 

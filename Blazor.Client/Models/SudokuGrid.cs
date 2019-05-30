@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Blazor.Client.Models
 {
-
     public class SudokuGrid
     {
         private SudokuCell[,] _grid = new SudokuCell[9,9];
@@ -13,8 +12,12 @@ namespace Blazor.Client.Models
         public IEnumerable<SudokuCell> GridAsIEnumerable => 
             from SudokuCell item in _grid select item; // Convert 2D array to an Ienumerable;
 
-        public static Action<int> KeyPressedEvent { get; set; }
-        public static void KeyPressed(int key) => KeyPressedEvent?.Invoke(key);
+        public static Action<int> NumberKeyPressedEvent { get; set; }
+        public static void NumberKeyPressed(int key) => NumberKeyPressedEvent?.Invoke(key);
+
+        public static Action<int> ArrowKeyPressedEvent { get; set; }
+        public static void ArrowKeyPressed(int key) => ArrowKeyPressedEvent?.Invoke(key);
+        
 
         public SudokuGrid()
         {
@@ -22,9 +25,22 @@ namespace Blazor.Client.Models
         }
 
 
-        public bool IsSolved()
+        public bool CheckSolved()
         {
-            return false;
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    if (Grid[x,y].Value <= 0 || Grid[x,y].Valid == false)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            lockGrid();
+
+            return true;
         }
 
 
@@ -133,6 +149,20 @@ namespace Blazor.Client.Models
         }
 
 
+        private void lockGrid()
+        {
+            for (int x = 0; x < 9; x++)
+            {
+                for (int y = 0; y < 9; y++)
+                {
+                    _grid[x,y].Enabled = false;
+                    _grid[x,y].SetValue(_grid[x,y].Value, true);
+                    _grid[x,y].SetSelected(false);
+                }
+            }
+        }
+
+
         public void PrintAll()
         {
             var str = "";
@@ -161,5 +191,4 @@ namespace Blazor.Client.Models
             return grid;
         }
     }
-
 }

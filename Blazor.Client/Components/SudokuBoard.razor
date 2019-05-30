@@ -52,13 +52,15 @@
 
     protected override void OnInit()
     {
-        SudokuGrid.KeyPressedEvent += OnKeyPressedEvent;
+        SudokuGrid.NumberKeyPressedEvent += OnNumberKeyPressedEvent;
+        SudokuGrid.ArrowKeyPressedEvent += OnArrowKeyPressedEvent;
+
         _difficultyList = Sudoku.GetDifficulties();
     }
 
     private void CreatePuzzle()
     {
-        if (_grid != null && _grid.IsSolved() == false)
+        if (_grid != null && _grid.CheckSolved() == false)
         {
             Modal.Show("Create new?", typeof(PromptModal), () => CreatePuzzleConfirmed(), null);
             return;
@@ -91,6 +93,11 @@
 
     private void CellSelected(SudokuCell cell)
     {
+        if (cell != null)
+        {
+            Console.WriteLine($"Selected ({cell.Position.X},{cell.Position.Y})");
+        }
+
         if (cell == _currentlySelectedCell)
         {
             _currentlySelectedCell.SetSelected(false);
@@ -108,14 +115,12 @@
         _currentlySelectedCell.SetSelected(true);
     }
 
-    public void OnKeyPressedEvent(int keyCode)
+    public void OnNumberKeyPressedEvent(int keyCode)
     {
         if (_currentlySelectedCell == null)
         {
             return;
         }
-        
-        // TODO: Handle arrow keys to move the selected cell around the board
         
         if (keyCode == '0')
         {
@@ -127,17 +132,66 @@
         var validValues = _grid.ValidValues(_currentlySelectedCell.Position.X, _currentlySelectedCell.Position.Y);
         Console.WriteLine($"Key: {intKey}, List: {string.Join(",", validValues.ToArray())}");
         _currentlySelectedCell.SetValue(intKey, validValues.Contains(intKey));
+
+        if (_grid.CheckSolved())
+        {
+            CounterComponent.StopCount();
+        }
+    }
+
+    public void OnArrowKeyPressedEvent(int keyCode)
+    {
+        if (_grid == null)
+        {
+            return;
+        }
+
+        var x = 0;
+        var y = 0;
+
+        if (_currentlySelectedCell != null)
+        {
+            x = _currentlySelectedCell.Position.X;
+            y = _currentlySelectedCell.Position.Y;
+
+            switch (keyCode)
+            {
+                case 37: // left
+                    y = (y - 1 + 9) % 9;
+                    break;
+                case 38: // up
+                    x = (x - 1 + 9) % 9;
+                    break;
+                case 39: // right
+                    y = (y + 1) % 9;
+                    break;
+                case 40: // down
+                    x = (x + 1) % 9;
+                    break;
+            }
+        }
+
+        CellSelected(_grid.Grid[x,y]);
     }
 
     public void Dispose()
     {
-        SudokuGrid.KeyPressedEvent -= OnKeyPressedEvent;
+        SudokuGrid.NumberKeyPressedEvent -= OnNumberKeyPressedEvent;
+        SudokuGrid.ArrowKeyPressedEvent -= OnArrowKeyPressedEvent;
     }
 
     [JSInvokable]
-    public static void KeyPressed(int keyCode)
+    public static void NumberKeyPressed(int keyCode)
     {
         //Console.WriteLine($"I am aware that {keyCode - '0'} was clicked!");
-        SudokuGrid.KeyPressed(keyCode);
+        SudokuGrid.NumberKeyPressed(keyCode);
     }
+
+    [JSInvokable]
+    public static void ArrowKeyPressed(int keyCode)
+    {
+        //Console.WriteLine($"I am aware that {keyCode - '0'} was clicked!");
+        SudokuGrid.ArrowKeyPressed(keyCode);
+    }
+    
 }
